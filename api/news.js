@@ -10,7 +10,38 @@ export default async function handler(req, res) {
 
     const rss = await response.text();
 
-    res.status(200).send(rss);
+    const items = [...rss.matchAll(/<item>([\s\S]*?)<\/item>/g)];
+
+    const news = items.slice(0, 25).map(item => {
+
+      const block = item[1];
+
+      const title =
+        (block.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) ||
+         block.match(/<title>(.*?)<\/title>/))?.[1] || "";
+
+      const link =
+        (block.match(/<link>(.*?)<\/link>/) || [])[1] || "";
+
+      const pubDate =
+        (block.match(/<pubDate>(.*?)<\/pubDate>/) || [])[1] || "";
+
+      const source =
+        (block.match(/<source[^>]*>(.*?)<\/source>/) || [])[1] || "";
+
+      return {
+        headline: title,
+        source: source,
+        published: pubDate,
+        url: link
+      };
+
+    });
+
+    res.status(200).json({
+      count: news.length,
+      news
+    });
 
   } catch (err) {
 

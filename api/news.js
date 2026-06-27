@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   try {
 
     const response = await fetch(
-      "https://news.google.com/rss/search?q=Indian+stock+market&hl=en-IN&gl=IN&ceid=IN:en"
+      "https://news.google.com/rss/headlines/section/topic/BUSINESS?hl=en-IN&gl=IN&ceid=IN:en"
     );
 
     const rss = await response.text();
